@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Proyectos de Investigación | Guía Institucional</title>
+    <style>
+        :root {
+            --primary: #39A900;
+            --primary-dark: #2b8000;
+            --secondary: #00324D;
+            --accent: #FDB913;
+            --bg-light: #f4f7f9;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --radius: 10px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--secondary) 0%, #004b73 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand { display: flex; align-items: center; gap: 0.75rem; }
+        .brand-badge {
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+        .brand h1 { font-size: clamp(1rem, 2vw, 1.3rem); font-weight: 600; }
+        .brand p { font-size: 0.78rem; color: #cbd5e1; }
+
+        .header-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; }
+        .role-badge {
+            background: rgba(255,255,255,0.12);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .role-badge.admin { background: var(--accent); color: var(--secondary); font-weight: 700; border-color: var(--accent); }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-secondary:hover { background: #002235; }
+        .btn-accent { background: var(--accent); color: var(--secondary); }
+        .btn-accent:hover { filter: brightness(0.95); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: #f1f5f9; }
+        .btn-header { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); }
+        .btn-header:hover { background: rgba(255,255,255,0.25); }
+        .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.78rem; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* Layout */
+        .app-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            flex: 1;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Sidebar */
+        aside {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 1.25rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .nav-title {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            padding: 0 0.75rem 0.5rem;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
+            color: var(--text-main);
+            text-align: left;
+            background: transparent;
+            font-weight: 500;
+            font-size: 0.86rem;
+        }
+        .nav-item:hover { background: #f1f5f9; }
+        .nav-item.active {
+            background: #eef9e8;
+            color: var(--primary-dark);
+            font-weight: 700;
+            border-left: 4px solid var(--primary);
+        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; flex-shrink: 0; }
+        .status-dot.done { background: var(--primary); }
+        .status-dot.reviewed { background: var(--accent); }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Main Content */
+        main { padding: clamp(1rem, 2.5vw, 2rem); overflow-y: auto; }
+        .section-panel { display: none; animation: fadeIn 0.25s ease; }
+        .section-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 1.25rem;
+        }
+        .card-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 0.85rem;
+            margin-bottom: 1.1rem;
+        }
+        .card-header h2 { color: var(--secondary); font-size: clamp(1.1rem, 2vw, 1.35rem); display: flex; align-items: center; gap: 0.5rem; }
+        .numeral-tag {
+            background: var(--secondary);
+            color: var(--accent);
+            padding: 0.2rem 0.6rem;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+
+        .guide-box {
+            background: #f8fafc;
+            border-left: 4px solid var(--secondary);
+            padding: 0.85rem 1rem;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.86rem;
+            color: #334155;
+            margin-bottom: 1.25rem;
+        }
+        .guide-box strong { color: var(--secondary); }
+
+        .form-group { margin-bottom: 1.1rem; }
+        label { display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; color: var(--secondary); }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(57, 169, 0, 0.12); }
+        textarea { min-height: 110px; resize: vertical; }
+
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.35rem;
+            gap: 0.5rem;
+        }
+        .progress-track { width: 100%; height: 6px; background: #e2e8f0; border-radius: 99px; overflow: hidden; margin-top: 0.4rem; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s ease, background 0.3s ease; }
+
+        /* Grid helpers */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; }
+
+        /* Tables */
+        .table-responsive { width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 600px; }
+        th { background: var(--secondary); color: white; text-align: left; padding: 0.7rem 0.85rem; font-weight: 600; }
+        td { padding: 0.65rem 0.85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+        tr:nth-child(even) td { background: #f8fafc; }
+
+        /* Subtabs */
+        .subtabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.6rem; }
+        .subtab-btn { background: #f1f5f9; color: var(--text-main); padding: 0.45rem 0.85rem; border-radius: 6px; font-size: 0.83rem; }
+        .subtab-btn.active { background: var(--secondary); color: white; }
+        .subtab-content { display: none; }
+        .subtab-content.active { display: block; }
+
+        /* Badges & Alerts */
+        .pill { display: inline-block; padding: 0.2rem 0.55rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; }
+        .pill-green { background: #dcfce7; color: #166534; }
+        .pill-amber { background: #fef3c7; color: #92400e; }
+        .pill-blue { background: #e0f2fe; color: #075985; }
+
+        /* Admin Review Box */
+        .admin-review-panel {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.25rem;
+        }
+        .admin-review-panel h4 { color: #92400e; font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem; }
+
+        /* APA Reference Item */
+        .apa-item {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .apa-text { padding-left: 1.5rem; text-indent: -1.5rem; font-size: 0.88rem; }
+
+        /* Evidence Cards */
+        .evidence-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .evidence-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.85rem;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .evidence-preview {
+            height: 110px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-size: 2rem;
+        }
+        .evidence-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal-box {
+            background: white;
+            border-radius: 12px;
+            max-width: 420px;
+            width: 100%;
+            padding: 1.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+        }
+
+        /* Mobile Drawer Button */
+        .mobile-menu-btn { display: none; }
+
+        @media (max-width: 900px) {
+            .app-container { grid-template-columns: 1fr; }
+            .mobile-menu-btn { display: inline-flex; }
+            aside {
+                display: none;
+                border-right: none;
+                border-bottom: 2px solid var(--primary);
+            }
+            aside.open { display: flex; }
+        }
+
+        @media print {
+            header, aside, .no-print, button, .subtabs { display: none !important; }
+            .app-container { display: block; }
+            .section-panel { display: block !important; page-break-after: always; }
+            .subtab-content { display: block !important; margin-bottom: 1rem; }
+            body { background: white; }
+            .card { box-shadow: none; border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="brand">
+        <button class="btn-header mobile-menu-btn" onclick="toggleSidebar()">☰ Menú</button>
+        <div class="brand-badge">SENA / INVESTIGACIÓN</div>
+        <div>
+            <h1>Gestor Interactivo de Proyectos Cualitativos</h1>
+            <p>Guía Institucional de 8 Numerales · Enfoque Fenomenológico y Andragógico</p>
+        </div>
+    </div>
+    <div class="header-controls">
+        <span id="roleBadge" class="role-badge">👤 Perfil: Investigador</span>
+        <button id="toggleRoleBtn" class="btn-accent" onclick="openAdminModal()">🔐 Acceso Admin</button>
+        <button class="btn-header" onclick="loadSampleProject()">✨ Cargar Proyecto IA Inclusiva</button>
+        <button class="btn-primary" onclick="saveAllData(true)">💾 Guardar</button>
+    </div>
+</header>
+
+<div class="app-container">
+    <aside id="sidebar">
+        <div class="nav-title">Estructura Guía Institucional</div>
+        <button class="nav-item active" data-target="sec-1" onclick="navigate('sec-1', this)">
+            <span>1. Título del Proyecto</span><span class="status-dot" id="dot-sec-1"></span>
+        </button>
+        <button class="nav-item" data-target="sec-2" onclick="navigate('sec-2', this)">
+            <span>2. Resumen (Máx. 500 pal.)</span><span class="status-dot" id="dot-sec-2"></span>
+        </button>
+        <button class="nav-item" data-target="sec-3" onclick="navigate('sec-3', this)">
+            <span>3. Descripción y Problema</span><span class="status-dot" id="dot-sec-3"></span>
+        </button>
+        <button class="nav-item" data-target="sec-4" onclick="navigate('sec-4', this)">
+            <span>4. Referente Conceptual</span><span class="status-dot" id="dot-sec-4"></span>
+        </button>
+        <button class="nav-item" data-target="sec-5" onclick="navigate('sec-5', this)">
+            <span>5. Objetivos (Máx. 500 pal.)</span><span class="status-dot" id="dot-sec-5"></span>
+        </button>
+        <button class="nav-item" data-target="sec-6" onclick="navigate('sec-6', this)">
+            <span>6. Metodología Propuesta</span><span class="status-dot" id="dot-sec-6"></span>
+        </button>
+        <button class="nav-item" data-target="sec-7" onclick="navigate('sec-7', this)">
+            <span>7. Cronograma de Actividades</span><span class="status-dot" id="dot-sec-7"></span>
+        </button>
+        <button class="nav-item" data-target="sec-8" onclick="navigate('sec-8', this)">
+            <span>8. Bibliografía (APA 7)</span><span class="status-dot" id="dot-sec-8"></span>
+        </button>
+        <button class="nav-item" data-target="sec-evidencias" onclick="navigate('sec-evidencias', this)">
+            <span>📎 Evidencias y Anexos</span><span class="pill pill-blue" id="evidenceCount">0</span>
+        </button>
+
+        <div class="sidebar-footer">
+            <button class="btn-secondary" style="width:100%; justify-content:center;" onclick="window.print()">🖨️ Exportar / Imprimir PDF</button>
+            <button class="btn-outline" style="width:100%; justify-content:center;" onclick="exportJSON()">⬇️ Descargar Respaldo JSON</button>
+        </div>
+    </aside>
+
+    <main>
+        <!-- SECCIÓN 1: TÍTULO -->
+        <section id="sec-1" class="section-panel active">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="numeral-tag">Numeral 1</span> Título del Proyecto</h2>
+                    <span class="pill pill-green">Identificación Base</span>
+                </div>
+                <div class="guide-box">
+                    <strong>Orientación Metodológica (Hernández-Sampieri):</strong> El título debe reflejar de manera clara, concisa y atractiva el fenómeno central de estudio, los participantes/generaciones involucradas y el contexto formativo, evitando términos propios de diseños experimentales o cuantitativos.
+                </div>
+                <div class="form-group">
+                    <label for="tituloProyecto">Título Propuesto de la Investigación</label>
+                    <textarea id="tituloProyecto" rows="3" placeholder="Ej: Integración de herramientas interactivas de Inteligencia Artificial en procesos formativos inclusivos: una mirada fenomenológica a las brechas intergeneracionales..." oninput="updateStats()"></textarea>
+                    <div class="meta-bar">
+                        <span id="tituloStats">0 palabras · 0 caracteres</span>
+                        <button class="btn-outline btn-sm no-print" onclick="suggestTitle()">💡 Sugerir Título Cualitativo</button>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="investigadorPrincipal">Investigador(a) Principal / Instructor(a)</label>
+                        <input type="text" id="investigadorPrincipal" placeholder="Nombre completo del investigador">
+                    </div>
+                    <div class="form-group">
+                        <label for="centroFormacion">Centro de Formación / Institución</label>
+                        <input type="text" id="centroFormacion" placeholder="Ej: Centro Náutico y Pesquero de Buenaventura - SENA">
+                    </div>
+                </div>
+                <div id="review-sec-1"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: RESUMEN -->
+        <section id="sec-2" class="section-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="numeral-tag">Numeral 2</span> Resumen del Proyecto</h2>
+                    <span class="pill pill-amber">Límite: Máximo 500 palabras</span>
+                </div>
+                <div class="guide-box">
+                    <strong>Nota de la Guía Institucional:</strong> <em>"SE HACE AL FINALIZAR EL PROYECTO. Debe tener un máximo de 500 palabras y contener la información necesaria para darle al lector una idea precisa de la pertinencia y calidad del proyecto: síntesis del problema, marco teórico, objetivos, metodología y resultados esperados."</em>
+                </div>
+                <div class="form-group">
+                    <label for="resumenProyecto">Síntesis Ejecutiva del Proyecto</label>
+                    <textarea id="resumenProyecto" rows="9" placeholder="Redacte aquí el resumen integrador del proyecto (máximo 500 palabras)..." oninput="updateStats()"></textarea>
+                    <div class="meta-bar">
+                        <span id="resumenWordCount">0 / 500 palabras</span>
+                        <span id="resumenStatus" class="pill pill-green">Dentro del límite</span>
+                    </div>
+                    <div class="progress-track"><div id="resumenBar" class="progress-fill"></div></div>
+                </div>
+                <div id="review-sec-2"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: DESCRIPCIÓN DEL PROYECTO -->
+        <section id="sec-3" class="section-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="numeral-tag">Numeral 3</span> Descripción del Proyecto</h2>
+                    <span class="pill pill-blue">4 Subcomponentes Obligatorios</span>
+                </div>
+
+                <div class="subtabs no-print">
+                    <button class="subtab-btn active" onclick="openSubtab('sub-31', this)">3.1 Planteamiento del Problema</button>
+                    <button class="subtab-btn" onclick="openSubtab('sub-32', this)">3.2 Formulación (Preguntas)</button>
+                    <button class="subtab-btn" onclick="openSubtab('sub-33', this)">3.3 Justificación</button>
+                    <button class="subtab-btn" onclick="openSubtab('sub-34', this)">3.4 Antecedentes</button>
+                </div>
+
+                <!-- 3.1 -->
+                <div id="sub-31" class="subtab-content active">
+                    <div class="guide-box">
+                        <strong>3.1 Planteamiento del problema:</strong> Descripción precisa de la naturaleza y magnitud del problema, contexto teórico general, estado actual del conocimiento, brechas existentes (temor tecnológico en adultos +40 años vs. uso desarticulado de IA en jóvenes) y vacío que se llenará.
+                    </div>
+                    <div class="form-group">
+                        <label for="planteamientoProblema">Descripción del Contexto, Brechas y Vacío de Conocimiento</label>
+                        <textarea id="planteamientoProblema" rows="10" oninput="updateStats()"></textarea>
+                    </div>
+                </div>
+
+                <!-- 3.2 -->
+                <div id="sub-32" class="subtab-content">
+                    <div class="guide-box">
+                        <strong>3.2 Formulación del problema:</strong> Explicitar la pregunta central de investigación cualitativa y preguntas auxiliares orientadas a comprender significados y experiencias vividas.
+                    </div>
+                    <div class="form-group">
+                        <label for="preguntaCentral">Pregunta Central de Investigación</label>
+                        <textarea id="preguntaCentral" rows="3" oninput="updateStats()"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="preguntasAuxiliares">Preguntas Auxiliares / Orientadoras de Entrevista</label>
+                        <textarea id="preguntasAuxiliares" rows="6" oninput="updateStats()"></textarea>
+                    </div>
+                </div>
+
+                <!-- 3.3 -->
+                <div id="sub-33" class="subtab-content">
+                    <div class="guide-box">
+                        <strong>3.3 Justificación:</strong> Elaborar en términos de necesidades, pertinencia social, implicaciones prácticas (andragogía e inclusión digital) y aporte a la generación de nuevo conocimiento.
+                    </div>
+                    <div class="form-group">
+                        <label for="justificacionProyecto">Justificación Social, Práctica y Teórica</label>
+                        <textarea id="justificacionProyecto" rows="9" oninput="updateStats()"></textarea>
+                    </div>
+                </div>
+
+                <!-- 3.4 -->
+                <div id="sub-34" class="subtab-content">
+                    <div class="guide-box">
+                        <strong>3.4 Antecedentes:</strong> Investigaciones previas en los ámbitos Internacional, Regional (Latinoamericano) y Nacional sobre andragogía, inclusión digital e Inteligencia Artificial.
+                    </div>
+                    <div class="grid-3 no-print" style="margin-bottom:0.8rem;">
+                        <select id="antAmbito">
+                            <option value="Internacional">Ámbito Internacional</option>
+                            <option value="Regional (Latinoamérica)">Ámbito Regional (Latinoamérica)</option>
+                            <option value="Nacional (Colombia)">Ámbito Nacional (Colombia)</option>
+                        </select>
+                        <input type="text" id="antAutor" placeholder="Autor(es) y Año (ej. Rochin Berumen et al., 2025)">
+                        <button class="btn-primary" onclick="addAntecedente()">+ Agregar Antecedente</button>
+                    </div>
+                    <div class="form-group no-print">
+                        <input type="text" id="antAporte" placeholder="Síntesis del hallazgo y aporte metodológico o teórico al proyecto...">
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width:18%;">Ámbito</th>
+                                    <th style="width:24%;">Referente / Estudio</th>
+                                    <th>Aporte al Proyecto de Investigación</th>
+                                    <th class="no-print" style="width:60px;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="antecedentesBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="review-sec-3"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: REFERENTE CONCEPTUAL -->
+        <section id="sec-4" class="section-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="numeral-tag">Numeral 4</span> Referente Conceptual</h2>
+                    <span class="pill pill-green">Categorías y Plano Gnoseológico</span>
+                </div>
+                <div class="guide-box">
+                    <strong>Sugerencia de la Guía:</strong> Elaborar un mapa conceptual o plano gnoseológico que evidencie las relaciones entre las categorías centrales (Andragogía contemporánea, Reconstrucción de autoestima académica, Brecha intergeneracional, IA inclusiva y Facilitador humanizador).
+                </div>
+                <div class="form-group">
+                    <label for="referenteConceptual">Desarrollo de Categorías Conceptuales e Interrelaciones</label>
+                    <textarea id="referenteConceptual" rows="8" oninput="updateStats()"></textarea>
+                </div>
+
+                <h4 style="color:var(--secondary); margin: 1rem 0 0.6rem;">Matriz de Categorías Teóricas</h4>
+                <div class="grid-3 no-print" style="margin-bottom:0.75rem;">
+                    <input type="text" id="catNombre" placeholder="Categoría (ej. Facilitador Humanizador)">
+                    <input type="text" id="catAutor" placeholder="Autor Sustento (ej. Bello, 2024; Rochin, 2025)">
+                    <button class="btn-primary" onclick="addCategoria()">+ Añadir Categoría</button>
+                </div>
+                <div class="form-group no-print">
+                    <input type="text" id="catDefinicion" placeholder="Definición operacional y relación con la inclusión digital intergeneracional...">
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Categoría Conceptual</th>
+                                <th>Referente Teórico</th>
+                                <th>Definición y Articulación en el Estudio</th>
+                                <th class="no-print" style="width:60px;">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoriasBody"></tbody>
+                    </table>
+                </div>
+                <div id="review-sec-4"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: OBJETIVOS -->
+        <section id="sec-5" class="section-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="numeral-tag">Numeral 5</span> Objetivos del Proyecto</h2>
+                    <span class="pill pill-amber">Límite: Máximo 500 palabras</span>
+                </div>
+                <div class="guide-box">
+                    <strong>Coherencia Cualitativa:</strong> Formular <strong>un solo Objetivo General</strong> coherente con la pregunta de investigación y <strong>Objetivos Específicos</strong> alcanzables. Evite verbos positivistas/cuantitativos (<em>medir, comprobar, calcular</em>) y priorice verbos inductivos (<em>comprender, explorar, interpretar, analizar, caracterizar</em>).
+                </div>
+                <div class="form-group">
+                    <label for="objetivoGeneral">Objetivo General</label>
+                    <textarea id="objetivoGeneral" rows="3" oninput="validateObjectives()"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="objetivosEspecificos">Objetivos Específicos (uno por línea)</label>
+                    <textarea id="objetivosEspecificos" rows="6" oninput="validateObjectives()"></textarea>
+                </div>
+                <div id="objValidationFeedback" class="guide-box" style="border-left-color: var(--primary); background:#f0fdf4;">
+                    Validador de coherencia cualitativa listo.
+                </div>
+                <div class="meta-bar">
+                    <span id="objetivosWordCount">0 / 500 palabras</span>
+                </div>
+                <div id="review-sec-5"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 6: METODOLOGÍA PROPUESTA -->
+        <section id="sec-6" class="section-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="numeral-tag">Numeral 6</span> Metodología Propuesta</h2>
+                    <span class="pill pill-blue">Límite: Máximo 3000 palabras</span>
+                </div>
+                <div class="guide-box">
+                    <strong>Rigor Científico (Hernández-Sampieri & Giorgi):</strong> Detallar enfoque cualitativo, diseño fenomenológico descriptivo/interpretativo, muestreo intencional por saturación, técnicas (entrevistas en profundidad, observación participante) y análisis inductivo mediante reducción fenomenológica.
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="enfoqueDiseno">Enfoque y Diseño Metodológico</label>
+                        <textarea id="enfoqueDiseno" rows="5" oninput="updateStats()"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="poblacionMuestra">Contexto, Participantes y Criterio de Suficiencia</label>
+                        <textarea id="poblacionMuestra" rows="5" oninput="updateStats()"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tecnicasAnalisis">Técnicas de Recolección, Procedimiento de Reducción Fenomenológica y Criterios de Rigor</label>
+                    <textarea id="tecnicasAnalisis" rows="6" oninput="updateStats()"></textarea>
+                </div>
+
+                <h4 style="color:var(--secondary); margin: 1.2rem 0 0.6rem;">Matriz de Trazabilidad Analítica (Reducción Fenomenológica)</h4>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cita Textual / Narrativa</th>
+                                <th>Unidad de Significado</th>
+                                <th>Código Interpretativo</th>
+                                <th>Categoría</th>
+                                <th>Dimensión Fenomenológica</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrizFenomenologicaBody"></tbody>
+                    </table>
+                </div>
+                <div class="meta-bar">
+                    <span id="metodologiaWordCount">0 / 3000 palabras</span>
+                </div>
+                <div id="review-sec-6"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 7: CRONOGRAMA -->
+        <section id="sec-7" class="section-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="numeral-tag">Numeral 7</span> Cronograma de Actividades</h2>
+                    <span class="pill pill-green">Planificación Temporal (Meses)</span>
+                </div>
+                <div class="grid-3 no-print" style="margin-bottom:0.85rem;">
+                    <input type="text" id="cronoFase" placeholder="Fase / Actividad metodológica">
+                    <input type="text" id="cronoResponsable" placeholder="Responsable (ej. Investigador Principal)">
+                    <button class="btn-primary" onclick="addCronoRow()">+ Añadir Actividad</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Actividad / Fase de Investigación</th>
+                                <th>Responsable</th>
+                                <th style="text-align:center;">M1</th>
+                                <th style="text-align:center;">M2</th>
+                                <th style="text-align:center;">M3</th>
+                                <th style="text-align:center;">M4</th>
+                                <th style="text-align:center;">M5</th>
+                                <th style="text-align:center;">M6</th>
+                                <th class="no-print">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cronogramaBody"></tbody>
+                    </table>
+                </div>
+                <div id="review-sec-7"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 8: BIBLIOGRAFÍA APA 7 AUTOMATIZADA -->
+        <section id="sec-8" class="section-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="numeral-tag">Numeral 8</span> Bibliografía (Generador APA 7 Automatizado)</h2>
+                    <span class="pill pill-blue">Orden Alfabético Automático</span>
+                </div>
+                <div class="guide-box">
+                    <strong>Automatización APA 7:</strong> Ingrese los metadatos de la fuente; el sistema aplicará las reglas de citación APA 7ª edición, ordenará alfabéticamente y generará el botón para copiar la cita parentética lista para insertar en el texto.
+                </div>
+
+                <div class="card" style="background:#f8fafc; box-shadow:none;" class="no-print">
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>Tipo de Fuente</label>
+                            <select id="apaTipo">
+                                <option value="articulo">Artículo Científico / Revista</option>
+                                <option value="libro">Libro / Manual Metodológico</option>
+                                <option value="web">Recurso Web / Institucional</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Autor(es) (Apellido, N.)</label>
+                            <input type="text" id="apaAutor" placeholder="Ej: Rochin Berumen, F. L., Aréchiga Flores, C. F., & Capetillo Medrano, C. B.">
+                        </div>
+                        <div class="form-group">
+                            <label>Año de Publicación</label>
+                            <input type="text" id="apaAnio" placeholder="Ej: 2025">
+                        </div>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>Título de la Obra o Artículo</label>
+                            <input type="text" id="apaTitulo" placeholder="Ej: Andragogía y experiencia del aprendizaje adulto...">
+                        </div>
+                        <div class="form-group">
+                            <label>Revista / Editorial</label>
+                            <input type="text" id="apaFuente" placeholder="Ej: Sinéctica, (66), e1809 / McGraw-Hill">
+                        </div>
+                        <div class="form-group">
+                            <label>DOI o URL</label>
+                            <input type="text" id="apaUrl" placeholder="Ej: https://doi.org/...">
+                        </div>
+                    </div>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+                        <button class="btn-primary" onclick="addApaReference()">➕ Generar e Insertar Referencia APA 7</button>
+                        <button class="btn-outline" onclick="preloadApaReferences()">📚 Precargar Fuentes Clave del Proyecto</button>
+                    </div>
+                </div>
+
+                <div id="apaListContainer" style="margin-top:1rem;"></div>
+                <div id="review-sec-8"></div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN EVIDENCIAS Y ANEXOS -->
+        <section id="sec-evidencias" class="section-panel">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span class="numeral-tag">Anexos</span> Carga de Evidencias, Mapas Conceptuales y Soportes</h2>
+                    <span class="pill pill-green">Repositorio Interactivo</span>
+                </div>
+                <div class="guide-box">
+                    Adjunte imágenes del mapa conceptual (Numeral 4), consentimientos informados, guías de entrevista o documentos PDF de soporte.
+                </div>
+                <div class="grid-2 no-print">
+                    <div class="form-group">
+                        <label for="evidenciaTitulo">Nombre o Descripción del Soporte</label>
+                        <input type="text" id="evidenciaTitulo" placeholder="Ej: Mapa Conceptual Categorías Andragógicas">
+                    </div>
+                    <div class="form-group">
+                        <label for="evidenciaFile">Seleccionar Imagen o Documento (PNG, JPG, PDF)</label>
+                        <input type="file" id="evidenciaFile" accept="image/*,.pdf,.doc,.docx">
+                    </div>
+                </div>
+                <button class="btn-primary no-print" onclick="uploadEvidence()">📤 Subir Evidencia al Proyecto</button>
+                <div id="evidenceGrid" class="evidence-grid"></div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- MODAL ACCESO ADMINISTRADOR -->
+<div id="adminModal" class="modal-backdrop">
+    <div class="modal-box">
+        <h3 style="color:var(--secondary); margin-bottom:0.5rem;">🔐 Autenticación de Evaluador / Administrador</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+            Ingrese el código institucional para habilitar observaciones y aprobación por numeral. (Código sugerido: <strong>1234</strong> o <strong>admin123</strong>)
+        </p>
+        <div class="form-group">
+            <input type="password" id="adminCodeInput" placeholder="Ingrese código de acceso">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button class="btn-outline" onclick="closeAdminModal()">Cancelar</button>
+            <button class="btn-primary" onclick="verifyAdmin()">Ingresar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isAdmin = false;
+    let projectData = {
+        fields: {},
+        antecedentes: [],
+        categorias: [],
+        matriz: [],
+        cronograma: [],
+        referencias: [],
+        reviews: {},
+        evidencias: []
+    };
+
+    const SECTIONS = ['sec-1','sec-2','sec-3','sec-4','sec-5','sec-6','sec-7','sec-8'];
+    const FIELD_IDS = [
+        'tituloProyecto','investigadorPrincipal','centroFormacion','resumenProyecto',
+        'planteamientoProblema','preguntaCentral','preguntasAuxiliares','justificacionProyecto',
+        'referenteConceptual','objetivoGeneral','objetivosEspecificos',
+        'enfoqueDiseno','poblacionMuestra','tecnicasAnalisis'
+    ];
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function navigate(secId, btn) {
+        document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        document.getElementById(secId).classList.add('active');
+        if (btn) btn.classList.add('active');
+        if (window.innerWidth <= 900) document.getElementById('sidebar').classList.remove('open');
+    }
+
+    function openSubtab(subId, btn) {
+        document.querySelectorAll('.subtab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.subtab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(subId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function countWords(str) {
+        const clean = (str || '').trim();
+        return clean ? clean.split(/\s+/).length : 0;
+    }
+
+    function updateStats() {
+        const title = document.getElementById('tituloProyecto').value;
+        document.getElementById('tituloStats').textContent = `${countWords(title)} palabras · ${title.length} caracteres`;
+
+        const res = document.getElementById('resumenProyecto').value;
+        const resWords = countWords(res);
+        document.getElementById('resumenWordCount').textContent = `${resWords} / 500 palabras`;
+        const pct = Math.min((resWords / 500) * 100, 100);
+        const bar = document.getElementById('resumenBar');
+        bar.style.width = pct + '%';
+        const status = document.getElementById('resumenStatus');
+        if (resWords > 500) {
+            bar.style.background = 'var(--danger)';
+            status.textContent = 'Excede el límite de 500 palabras';
+            status.className = 'pill pill-amber';
+        } else {
+            bar.style.background = 'var(--primary)';
+            status.textContent = 'Dentro del límite';
+            status.className = 'pill pill-green';
+        }
+
+        const metWords = countWords(document.getElementById('enfoqueDiseno').value) +
+                         countWords(document.getElementById('poblacionMuestra').value) +
+                         countWords(document.getElementById('tecnicasAnalisis').value);
+        document.getElementById('metodologiaWordCount').textContent = `${metWords} / 3000 palabras`;
+
+        updateCompletionDots();
+        saveAllData(false);
+    }
+
+    function validateObjectives() {
+        const gen = document.getElementById('objetivoGeneral').value;
+        const esp = document.getElementById('objetivosEspecificos').value;
+        const totalWords = countWords(gen) + countWords(esp);
+        document.getElementById('objetivosWordCount').textContent = `${totalWords} / 500 palabras`;
+
+        const combined = (gen + ' ' + esp).toLowerCase();
+        const quantVerbs = ['medir', 'cuantificar', 'comprobar', 'calcular', 'estadístic', 'correlacionar'];
+        const qualVerbs = ['comprender', 'explorar', 'interpretar', 'analizar', 'caracterizar', 'describir', 'develar'];
+        const foundQuant = quantVerbs.filter(v => combined.includes(v));
+        const foundQual = qualVerbs.filter(v => combined.includes(v));
+        const box = document.getElementById('objValidationFeedback');
+
+        if (foundQuant.length > 0) {
+            box.style.borderLeftColor = 'var(--danger)';
+            box.style.background = '#fef2f2';
+            box.innerHTML = `⚠️ <strong>Alerta Metodológica:</strong> Se detectaron términos asociados a enfoques cuantitativos (<em>${foundQuant.join(', ')}</em>). Según Hernández-Sampieri, sustitúyalos por verbos inductivos como <em>comprender, explorar o interpretar</em>.`;
+        } else if (foundQual.length > 0) {
+            box.style.borderLeftColor = 'var(--primary)';
+            box.style.background = '#f0fdf4';
+            box.innerHTML = `✅ <strong>Coherencia Cualitativa Validada:</strong> Verbos inductivos detectados (<em>${foundQual.join(', ')}</em>), alineados con el diseño fenomenológico.`;
+        } else {
+            box.style.borderLeftColor = 'var(--secondary)';
+            box.style.background = '#f8fafc';
+            box.textContent = 'Inicie cada objetivo con un verbo en infinitivo de carácter comprensivo o interpretativo.';
+        }
+        updateCompletionDots();
+        saveAllData(false);
+    }
+
+    function updateCompletionDots() {
+        const checks = {
+            'sec-1': document.getElementById('tituloProyecto').value.trim().length > 10,
+            'sec-2': document.getElementById('resumenProyecto').value.trim().length > 20,
+            'sec-3': document.getElementById('planteamientoProblema').value.trim().length > 20,
+            'sec-4': document.getElementById('referenteConceptual').value.trim().length > 20,
+            'sec-5': document.getElementById('objetivoGeneral').value.trim().length > 15,
+            'sec-6': document.getElementById('enfoqueDiseno').value.trim().length > 20,
+            'sec-7': projectData.cronograma.length > 0,
+            'sec-8': projectData.referencias.length > 0
+        };
+        SECTIONS.forEach(sec => {
+            const dot = document.getElementById('dot-' + sec);
+            if (!dot) return;
+            dot.classList.remove('done', 'reviewed');
+            if (projectData.reviews[sec] && projectData.reviews[sec].approved) {
+                dot.classList.add('reviewed');
+            } else if (checks[sec]) {
+                dot.classList.add('done');
+            }
+        });
+    }
+
+    function suggestTitle() {
+        document.getElementById('tituloProyecto').value = "Integración de herramientas interactivas de Inteligencia Artificial en procesos formativos inclusivos: una comprensión fenomenológica de las brechas intergeneracionales entre aprendices adultos mayores de 40 años y jóvenes";
+        updateStats();
+    }
+
+    // Antecedentes
+    function addAntecedente() {
+        const ambito = document.getElementById('antAmbito').value;
+        const autor = document.getElementById('antAutor').value.trim();
+        const aporte = document.getElementById('antAporte').value.trim();
+        if (!autor || !aporte) return alert('Complete el autor/año y el aporte del antecedente.');
+        projectData.antecedentes.push({ ambito, autor, aporte });
+        document.getElementById('antAutor').value = '';
+        document.getElementById('antAporte').value = '';
+        renderAntecedentes();
+        saveAllData(false);
+    }
+
+    function renderAntecedentes() {
+        const tbody = document.getElementById('antecedentesBody');
+        tbody.innerHTML = projectData.antecedentes.map((item, idx) => `
+            <tr>
+                <td><span class="pill pill-blue">${item.ambito}</span></td>
+                <td><strong>${item.autor}</strong></td>
+                <td>${item.aporte}</td>
+                <td class="no-print"><button class="btn-danger btn-sm" onclick="removeAntecedente(${idx})">✕</button></td>
+            </tr>
+        `).join('');
+    }
+    function removeAntecedente(idx) { projectData.antecedentes.splice(idx, 1); renderAntecedentes(); saveAllData(false); }
+
+    // Categorías Conceptuales
+    function addCategoria() {
+        const nombre = document.getElementById('catNombre').value.trim();
+        const autor = document.getElementById('catAutor').value.trim();
+        const def = document.getElementById('catDefinicion').value.trim();
+        if (!nombre || !def) return alert('Complete el nombre de la categoría y su definición.');
+        projectData.categorias.push({ nombre, autor, def });
+        document.getElementById('catNombre').value = '';
+        document.getElementById('catAutor').value = '';
+        document.getElementById('catDefinicion').value = '';
+        renderCategorias();
+        saveAllData(false);
+    }
+
+    function renderCategorias() {
+        document.getElementById('categoriasBody').innerHTML = projectData.categorias.map((c, idx) => `
+            <tr>
+                <td><strong>${c.nombre}</strong></td>
+                <td>${c.autor}</td>
+                <td>${c.def}</td>
+                <td class="no-print"><button class="btn-danger btn-sm" onclick="removeCategoria(${idx})">✕</button></td>
+            </tr>
+        `).join('');
+    }
+    function removeCategoria(idx) { projectData.categorias.splice(idx, 1); renderCategorias(); saveAllData(false); }
+
+    // Matriz Fenomenológica
+    function renderMatriz() {
+        document.getElementById('matrizFenomenologicaBody').innerHTML = projectData.matriz.map(m => `
+            <tr>
+                <td><em>${m.cita}</em></td>
+                <td>${m.unidad}</td>
+                <td><span class="pill pill-amber">${m.codigo}</span></td>
+                <td>${m.categoria}</td>
+                <td><strong>${m.dimension}</strong></td>
+            </tr>
+        `).join('');
+    }
+
+    // Cronograma
+    function addCronoRow() {
+        const fase = document.getElementById('cronoFase').value.trim();
+        const resp = document.getElementById('cronoResponsable').value.trim() || 'Investigador Principal';
+        if (!fase) return alert('Ingrese el nombre de la fase o actividad.');
+        projectData.cronograma.push({ fase, resp, months: [true, false, false, false, false, false] });
+        document.getElementById('cronoFase').value = '';
+        renderCronograma();
+        updateCompletionDots();
+        saveAllData(false);
+    }
+
+    function toggleMonth(rowIdx, mIdx) {
+        projectData.cronograma[rowIdx].months[mIdx] = !projectData.cronograma[rowIdx].months[mIdx];
+        renderCronograma();
+        saveAllData(false);
+    }
+
+    function renderCronograma() {
+        document.getElementById('cronogramaBody').innerHTML = projectData.cronograma.map((row, rIdx) => `
+            <tr>
+                <td><strong>${row.fase}</strong></td>
+                <td>${row.resp}</td>
+                ${row.months.map((active, mIdx) => `
+                    <td style="text-align:center; cursor:pointer; background:${active ? '#dcfce7' : 'transparent'};" onclick="toggleMonth(${rIdx}, ${mIdx})">
+                        ${active ? '🟩' : '⬜'}
+                    </td>
+                `).join('')}
+                <td class="no-print"><button class="btn-danger btn-sm" onclick="removeCrono(${rIdx})">✕</button></td>
+            </tr>
+        `).join('');
+    }
+    function removeCrono(idx) { projectData.cronograma.splice(idx, 1); renderCronograma(); updateCompletionDots(); saveAllData(false); }
+
+    // Generador APA 7
+    function addApaReference() {
+        const tipo = document.getElementById('apaTipo').value;
+        const autor = document.getElementById('apaAutor').value.trim();
+        const anio = document.getElementById('apaAnio').value.trim();
+        const titulo = document.getElementById('apaTitulo').value.trim();
+        const fuente = document.getElementById('apaFuente').value.trim();
+        const url = document.getElementById('apaUrl').value.trim();
+
+        if (!autor || !anio || !titulo) return alert('Autor, Año y Título son obligatorios para generar la referencia APA 7.');
+
+        let formatted = '';
+        if (tipo === 'articulo') {
+            formatted = `${autor} (${anio}). ${titulo}. <em>${fuente}</em>. ${url}`;
+        } else if (tipo === 'libro') {
+            formatted = `${autor} (${anio}). <em>${titulo}</em>. ${fuente}. ${url}`;
+        } else {
+            formatted = `${autor} (${anio}). <em>${titulo}</em>. ${fuente}. ${url}`;
+        }
+
+        const firstAuthorLastName = autor.split(',')[0].trim();
+        const hasMultiple = autor.includes('&') || autor.split(',').length > 2;
+        const inText = `(${firstAuthorLastName}${hasMultiple ? ' et al.' : ''}, ${anio})`;
+
+        projectData.referencias.push({ autor, anio, formatted, inText });
+        ['apaAutor','apaAnio','apaTitulo','apaFuente','apaUrl'].forEach(id => document.getElementById(id).value = '');
+        renderApaReferences();
+        updateCompletionDots();
+        saveAllData(false);
+    }
+
+    function preloadApaReferences() {
+        const defaults = [
+            {
+                autor: "Hernández-Sampieri, R., & Mendoza Torres, C. P.",
+                anio: "2018",
+                formatted: "Hernández-Sampieri, R., & Mendoza Torres, C. P. (2018). <em>Metodología de la investigación: Las rutas cuantitativa, cualitativa y mixta</em>. McGraw-Hill Interamericana.",
+                inText: "(Hernández-Sampieri & Mendoza Torres, 2018)"
+            },
+            {
+                autor: "Morales-Pacavita, O. S.",
+                anio: "2016",
+                formatted: "Morales-Pacavita, O. S. (2016). Desarrollo de competencias tecnológicas en docentes. Una mirada desde la Andragogía. <em>EBSCO Research</em>. https://research.ebsco.com/plink/0bc9f46b-d13f-3342-8c04-a9a0d2f282f3",
+                inText: "(Morales-Pacavita, 2016)"
+            },
+            {
+                autor: "Rochin Berumen, F. L., Aréchiga Flores, C. F., & Capetillo Medrano, C. B.",
+                anio: "2025",
+                formatted: "Rochin Berumen, F. L., Aréchiga Flores, C. F., & Capetillo Medrano, C. B. (2025). Andragogía y experiencia del aprendizaje adulto en comunidades rurales: un estudio fenomenológico. <em>Sinéctica</em>, (66), e1809. https://sinectica.iteso.mx",
+                inText: "(Rochin Berumen et al., 2025)"
+            }
+        ];
+        defaults.forEach(d => {
+            if (!projectData.referencias.some(r => r.autor === d.autor)) projectData.referencias.push(d);
+        });
+        renderApaReferences();
+        updateCompletionDots();
+        saveAllData(false);
+    }
+
+    function renderApaReferences() {
+        projectData.referencias.sort((a, b) => a.autor.localeCompare(b.autor));
+        const container = document.getElementById('apaListContainer');
+        if (projectData.referencias.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-muted); font-size:0.86rem;">No hay referencias registradas aún. Use el formulario superior o precargue las fuentes del proyecto.</p>';
+            return;
+        }
+        container.innerHTML = projectData.referencias.map((ref, idx) => `
+            <div class="apa-item">
+                <div class="apa-text">${ref.formatted}</div>
+                <div class="no-print" style="display:flex; gap:0.4rem; flex-shrink:0;">
+                    <button class="btn-outline btn-sm" onclick="copyCitation('${ref.inText}')" title="Copiar cita parentética">📋 ${ref.inText}</button>
+                    <button class="btn-danger btn-sm" onclick="removeApa(${idx})">✕</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function copyCitation(text) {
+        navigator.clipboard.writeText(text);
+        alert('Cita copiada al portapapeles: ' + text);
+    }
+    function removeApa(idx) { projectData.referencias.splice(idx, 1); renderApaReferences(); updateCompletionDots(); saveAllData(false); }
+
+    // Evidencias
+    function uploadEvidence() {
+        const title = document.getElementById('evidenciaTitulo').value.trim();
+        const fileInput = document.getElementById('evidenciaFile');
+        const file = fileInput.files[0];
+        if (!file) return alert('Seleccione un archivo o imagen.');
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            projectData.evidencias.push({
+                title: title || file.name,
+                name: file.name,
+                type: file.type,
+                dataUrl: e.target.result
+            });
+            document.getElementById('evidenciaTitulo').value = '';
+            fileInput.value = '';
+            renderEvidences();
+            saveAllData(false);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function renderEvidences() {
+        document.getElementById('evidenceCount').textContent = projectData.evidencias.length;
+        document.getElementById('evidenceGrid').innerHTML = projectData.evidencias.map((ev, idx) => `
+            <div class="evidence-card">
+                <div class="evidence-preview">
+                    ${ev.type.startsWith('image/') ? `<img src="${ev.dataUrl}" alt="${ev.title}">` : '📄'}
+                </div>
+                <strong style="font-size:0.86rem;">${ev.title}</strong>
+                <span style="font-size:0.75rem; color:var(--text-muted);">${ev.name}</span>
+                <div style="display:flex; gap:0.4rem; margin-top:auto;" class="no-print">
+                    <a href="${ev.dataUrl}" download="${ev.name}" class="btn-outline btn-sm" style="text-decoration:none;">⬇️ Descargar</a>
+                    <button class="btn-danger btn-sm" onclick="removeEvidence(${idx})">✕</button>
+                </div>
+            </div>
+        `).join('');
+    }
+    function removeEvidence(idx) { projectData.evidencias.splice(idx, 1); renderEvidences(); saveAllData(false); }
+
+    // Modo Administrador / Evaluador
+    function openAdminModal() {
+        if (isAdmin) {
+            isAdmin = false;
+            updateRoleUI();
+            return;
+        }
+        document.getElementById('adminModal').classList.add('open');
+    }
+    function closeAdminModal() { document.getElementById('adminModal').classList.remove('open'); }
+    function verifyAdmin() {
+        const code = document.getElementById('adminCodeInput').value.trim();
+        if (code === '1234' || code === 'admin123') {
+            isAdmin = true;
+            closeAdminModal();
+            document.getElementById('adminCodeInput').value = '';
+            updateRoleUI();
+        } else {
+            alert('Código incorrecto. Intente con 1234 o admin123.');
+        }
+    }
+
+    function updateRoleUI() {
+        const badge = document.getElementById('roleBadge');
+        const btn = document.getElementById('toggleRoleBtn');
+        if (isAdmin) {
+            badge.textContent = '🛡️ Perfil: Evaluador / Administrador';
+            badge.classList.add('admin');
+            btn.textContent = '🚪 Salir Modo Admin';
+        } else {
+            badge.textContent = '👤 Perfil: Investigador';
+            badge.classList.remove('admin');
+            btn.textContent = '🔐 Acceso Admin';
+        }
+        renderAdminReviews();
+    }
+
+    function renderAdminReviews() {
+        SECTIONS.forEach(sec => {
+            const container = document.getElementById('review-' + sec);
+            if (!container) return;
+            const rev = projectData.reviews[sec] || { comment: '', approved: false };
+            if (isAdmin) {
+                container.innerHTML = `
+                    <div class="admin-review-panel no-print">
+                        <h4>🛡️ Evaluación Institucional del Numeral</h4>
+                        <textarea rows="2" placeholder="Escriba retroalimentación metodológica para el investigador..." onchange="saveReview('${sec}', this.value, null)">${rev.comment}</textarea>
+                        <div style="margin-top:0.5rem; display:flex; align-items:center; gap:0.6rem;">
+                            <input type="checkbox" id="chk-${sec}" ${rev.approved ? 'checked' : ''} onchange="saveReview('${sec}', null, this.checked)" style="width:auto;">
+                            <label for="chk-${sec}" style="margin:0; cursor:pointer;">Marcar numeral como Aprobado por Comité</label>
+                        </div>
+                    </div>
+                `;
+            } else if (rev.comment || rev.approved) {
+                container.innerHTML = `
+                    <div class="admin-review-panel">
+                        <h4>📋 Concepto del Evaluador ${rev.approved ? '<span class="pill pill-green">✅ Aprobado</span>' : '<span class="pill pill-amber">⏳ En Revisión</span>'}</h4>
+                        <p style="font-size:0.86rem;">${rev.comment || 'Sin observaciones adicionales.'}</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '';
+            }
+        });
+    }
+
+    function saveReview(sec, comment, approved) {
+        if (!projectData.reviews[sec]) projectData.reviews[sec] = { comment: '', approved: false };
+        if (comment !== null) projectData.reviews[sec].comment = comment;
+        if (approved !== null) projectData.reviews[sec].approved = approved;
+        updateCompletionDots();
+        saveAllData(false);
+    }
+
+    // Persistencia y Carga de Proyecto Base
+    function saveAllData(notify) {
+        FIELD_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) projectData.fields[id] = el.value;
+        });
+        localStorage.setItem('sena_proyecto_ia_v3', JSON.stringify(projectData));
+        if (notify) alert('✅ Proyecto guardado correctamente en el almacenamiento local del navegador.');
+    }
+
+    function loadSavedData() {
+        const raw = localStorage.getItem('sena_proyecto_ia_v3');
+        if (!raw) {
+            loadSampleProject();
+            return;
+        }
+        projectData = JSON.parse(raw);
+        FIELD_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && projectData.fields[id] !== undefined) el.value = projectData.fields[id];
+        });
+        renderAllLists();
+    }
+
+    function renderAllLists() {
+        renderAntecedentes();
+        renderCategorias();
+        renderMatriz();
+        renderCronograma();
+        renderApaReferences();
+        renderEvidences();
+        renderAdminReviews();
+        updateStats();
+        validateObjectives();
+    }
+
+    function exportJSON() {
+        saveAllData(false);
+        const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'proyecto_investigacion_ia_inclusiva.json';
+        a.click();
+    }
+
+    function loadSampleProject() {
+        projectData.fields = {
+            tituloProyecto: "Integración de herramientas interactivas de Inteligencia Artificial en procesos formativos inclusivos: una comprensión fenomenológica de las brechas intergeneracionales entre aprendices adultos mayores de 40 años y jóvenes",
+            investigadorPrincipal: "Edwin Jovany Perlaza Castillo",
+            centroFormacion: "SENA - Centro Náutico y Pesquero de Buenaventura",
+            resumenProyecto: "La irrupción de herramientas interactivas de Inteligencia Artificial (IA) en la formación profesional ha evidenciado tensiones intergeneracionales que afectan la inclusión educativa. El presente proyecto tiene como objetivo comprender las experiencias, significados y prácticas asociadas a la integración de la IA en ambientes formativos inclusivos, contrastando el temor y la resistencia tecnológica de aprendices adultos mayores de 40 años frente al uso desarticulado o acrítico por parte de los aprendices jóvenes. Fundamentado en la andragogía contemporánea (Rochin Berumen et al., 2025) y la metodología cualitativa de Hernández-Sampieri (2018), se adopta un diseño fenomenológico descriptivo e interpretativo. Mediante muestreo intencional por saturación, entrevistas en profundidad y observación participante, se aplicará reducción fenomenológica para construir una matriz de trazabilidad analítica que oriente estrategias de mediación pedagógica humanizadora.",
+            planteamientoProblema: "En los entornos actuales de formación profesional integral coexisten distintas generaciones frente a la rápida adopción de herramientas interactivas de Inteligencia Artificial (IA). Se identifica una doble problemática cualitativa: por un lado, los aprendices adultos mayores de 40 años experimentan temor tecnológico, ansiedad y baja autoeficacia percibida ante interfaces emergentes; por otro, los aprendices jóvenes tienden a realizar un uso instrumental, inmediato y poco reflexivo de la IA sin articulación pedagógica. Aunque la literatura reconoce la importancia de la utilidad práctica y la autonomía en el aprendizaje adulto, existe un vacío investigativo sobre cómo mediar didácticamente estas dos realidades dentro de un mismo ambiente formativo inclusivo.",
+            preguntaCentral: "¿De qué manera experimentan y resignifican los aprendices de diferentes rangos de edad (adultos mayores de 40 años frente a jóvenes) el uso de herramientas interactivas de Inteligencia Artificial en los procesos formativos inclusivos?",
+            preguntasAuxiliares: "1. ¿Cómo se manifiestan las barreras emocionales y el temor tecnológico en los aprendices adultos mayores de 40 años frente a la IA?
+2. ¿Qué prácticas de uso desarticulado o acrítico de la IA predominan en los aprendices jóvenes durante sus proyectos formativos?
+3. ¿De qué forma el instructor como facilitador humanizador puede equilibrar ambas brechas generacionales en el aula?",
+            justificacionProyecto: "Relevancia Social: Promueve la equidad e inclusión digital intergeneracional, evitando la exclusión de trabajadores y aprendices adultos (+40 años) en la transformación digital.
+Implicaciones Prácticas: Brinda a los instructores lineamientos andragógicos para transformar el miedo tecnológico adulto en autoeficacia y orientar el pensamiento crítico juvenil.
+Valor Teórico y Metodológico: Articula la fenomenología descriptiva con la andragogía contemporánea aplicada a tecnologías emergentes de IA.",
+            referenteConceptual: "El estudio se sustenta en cuatro ejes conceptuales interrelacionados: (1) Andragogía contemporánea, centrada en la utilidad práctica inmediata y validación de la experiencia previa del adulto; (2) Reconstrucción de la autoestima académica y dimensión emocional del aprendizaje, clave para superar la vergüenza o inseguridad tecnológica; (3) Alfabetización crítica en Inteligencia Artificial, orientada a superar el uso mecánico juvenil; y (4) El facilitador como figura humanizadora y mediador socioemocional en comunidades de aprendizaje.",
+            objetivoGeneral: "Comprender las experiencias, significados y prácticas de los aprendices adultos mayores de 40 años, jóvenes e instructores en torno a la integración de herramientas interactivas de Inteligencia Artificial en procesos formativos inclusivos.",
+            objetivosEspecificos: "Explorar las barreras emocionales, percepciones y procesos de reconstrucción de autoestima académica de los aprendices mayores de 40 años frente al uso de IA.
+Caracterizar las prácticas y sentidos que los aprendices jóvenes atribuyen al uso de herramientas de IA en el desarrollo de sus actividades formativas.
+Interpretar el rol mediador y humanizador del instructor en la articulación colaborativa entre generaciones dentro de ambientes formativos inclusivos.",
+            enfoqueDiseno: "Enfoque cualitativo con diseño fenomenológico descriptivo e interpretativo (inspirado en Amedeo Giorgi y Hernández-Sampieri), orientado a captar la esencia de la experiencia vivida por los actores educativos en su entorno natural sin manipulación de variables.",
+            poblacionMuestra: "Muestreo intencional cualitativo conformado por aprendices adultos (+40 años), aprendices jóvenes e instructores de formación profesional integral. El tamaño de la muestra se determinará por criterio de suficiencia o saturación fenomenológica.",
+            tecnicasAnalisis: "Recolección mediante entrevistas en profundidad semiestructuradas, observación participante y bitácora de campo. El análisis seguirá las fases de reducción fenomenológica: lectura global, delimitación de unidades de significado, transformación a lenguaje pedagógico, categorización y validación mediante matriz de trazabilidad y criterios de credibilidad, transferibilidad y confirmabilidad."
+        };
+
+        projectData.antecedentes = [
+            { ambito: "Regional (Latinoamérica)", autor: "Rochin Berumen et al. (2025)", aporte: "Estudio fenomenológico en México que demuestra que el aprendizaje adulto requiere utilidad práctica inmediata, reconstrucción de la autoestima académica y un facilitador como figura humanizadora." },
+            { ambito: "Nacional (Colombia)", autor: "Morales-Pacavita (2016)", aporte: "Analiza el desarrollo de competencias tecnológicas desde una mirada andragógica, resaltando la necesidad de adaptar las estrategias digitales a la experiencia del adulto." },
+            { ambito: "Internacional", autor: "Edisherashvili et al. (2025)", aporte: "Revisión sistemática sobre el impacto de las emociones de logro y la ansiedad tecnológica en la permanencia de aprendices adultos en entornos digitales." }
+        ];
+
+        projectData.categorias = [
+            { nombre: "Reconstrucción de Autoestima Académica", autor: "Rochin Berumen et al. (2025)", def: "Tránsito emocional desde el miedo tecnológico y la inseguridad hacia la confianza y autoeficacia percibida en adultos +40 años." },
+            { nombre: "Facilitador como Figura Humanizadora", autor: "Bello (2024); Rochin Berumen (2025)", def: "Rol empático del instructor que valida saberes previos y reduce la ansiedad grupal frente a la IA." },
+            { nombre: "Mediación Crítica de la IA", autor: "Hernández-Sampieri (2018)", def: "Uso reflexivo y ético de herramientas interactivas para evitar la dependencia mecánica en aprendices jóvenes." }
+        ];
+
+        projectData.matriz = [
+            { cita: "“Al principio sentía pena y miedo de dañar el sistema...” (Adulto, 48 años)", unidad: "Temor inicial frente a interfaces digitales", codigo: "Ansiedad tecnológica", categoria: "Barreras emocionales", dimension: "Reconstrucción de autoestima académica" },
+            { cita: "“Usamos la IA para sacar rápido el texto sin leerlo bien...” (Joven, 21 años)", unidad: "Uso instrumental inmediato sin filtro crítico", codigo: "Automatización acrítica", categoria: "Prácticas juveniles de IA", dimension: "Brecha de uso pedagógico" },
+            { cita: "“Cuando el instructor nos explicó con paciencia y ejemplos reales, entendí que sí puedo” (Adulto, 45 años)", unidad: "Acompañamiento empático y utilidad práctica", codigo: "Mediación humanizadora", categoria: "Rol del facilitador", dimension: "Inclusión formativa intergeneracional" }
+        ];
+
+        projectData.cronograma = [
+            { fase: "Fase 1: Revisión documental y diseño de guías de entrevista", resp: "Investigador Principal", months: [true, true, false, false, false, false] },
+            { fase: "Fase 2: Inmersión en campo, entrevistas en profundidad y observación", resp: "Equipo Investigador", months: [false, true, true, true, false, false] },
+            { fase: "Fase 3: Transcripción y reducción fenomenológica (Matriz)", resp: "Investigador Principal", months: [false, false, false, true, true, false] },
+            { fase: "Fase 4: Validación con participantes e informe final", resp: "Investigador Principal", months: [false, false, false, false, true, true] }
+        ];
+
+        FIELD_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && projectData.fields[id] !== undefined) el.value = projectData.fields[id];
+        });
+        preloadApaReferences();
+        renderAllLists();
+    }
+
+    window.addEventListener('DOMContentLoaded', loadSavedData);
+</script>
+</body>
+</html>
